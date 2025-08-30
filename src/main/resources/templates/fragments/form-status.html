@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+<div th:fragment="status">
+    <div th:if="${messageType == 'success'}" class="success-message">
+        ✅ <span th:text="${message}"></span>
+    </div>
+    <div th:if="${messageType == 'error'}" class="error-message">
+        ❌ <span th:text="${message}"></span>
+    </div>
+</div>
+</body>
+</html>

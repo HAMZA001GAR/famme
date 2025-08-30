@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+<div th:fragment="table">
+    <table class="wa-table wa-striped wa-hover">
+        <thead>
+        <tr>
+            <th>Title</th>
+            <th>Vendor</th>
+            <th>Type</th>
+            <th>Tags</th>
+            <th>Created</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="product : ${products}">
+            <td th:text="${product.title}"></td>
+            <td th:text="${product.vendor ?: 'N/A'}"></td>
+            <td th:text="${product.productType ?: 'N/A'}"></td>
+            <td>
+                <span th:if="${product.tags != null and #lists.size(product.tags) > 0}" 
+                      th:text="${#strings.listJoin(product.tags, ', ')}"></span>
+                <span th:if="${product.tags == null or #lists.size(product.tags) == 0}">No tags</span>
+            </td>
+            <td>
+                <span th:if="${product.createdAt != null}" th:text="${#strings.substring(product.createdAt.toString(), 0, 10)}"></span>
+                <span th:if="${product.createdAt == null}">N/A</span>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+    
+    <div th:if="${#lists.isEmpty(products)}" class="wa-alert wa-info">
+        No products found. Click the "Sync Products" button to fetch products from the external API.
+    </div>
+</div>
+</body>
+</html>
