@@ -14,4 +14,5 @@ interface ProductRepository {
     fun saveOption(option: ProductOption): ProductOption
     fun findAll(): List<Product>
     fun deleteByExternalId(externalId: Long)
+    fun searchProductsByTitle(query: String): List<Product>
 }

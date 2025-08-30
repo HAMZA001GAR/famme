@@ -61,11 +61,28 @@ class ProductWebController(
         return "products"
     }
 
+    @GetMapping("/search-page")
+    fun searchPage(model: Model): String {
+        return "product-search"
+    }
+
     @GetMapping("/load")
     fun loadProducts(model: Model): String {
         val products = productService.findAllProducts()
         model.addAttribute("products", products)
         return "fragments/product-table :: table"  // returns the table fragment
+    }
+
+    @GetMapping("/search")
+    fun searchProducts(@RequestParam("query", defaultValue = "") query: String, model: Model): String {
+        val products = if (query.isBlank()) {
+            productService.findAllProducts()
+        } else {
+            productService.searchProducts(query)
+        }
+        model.addAttribute("products", products)
+        model.addAttribute("searchQuery", query)
+        return "fragments/product-table :: table"
     }
 
     @PostMapping("/add")
@@ -113,4 +130,5 @@ class ProductWebController(
             "fragments/form-status :: status"
         }
     }
+
 }

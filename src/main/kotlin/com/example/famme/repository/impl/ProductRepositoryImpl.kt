@@ -8,7 +8,7 @@ import com.example.famme.repository.ProductRepository
 import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.jdbc.support.GeneratedKeyHolder
 import org.springframework.stereotype.Repository
-import java.sql.Timestamp
+
 
 @Repository
 class ProductRepositoryImpl(
@@ -206,4 +206,57 @@ class ProductRepositoryImpl(
         val sql = "DELETE FROM products WHERE external_id = ?"
         jdbcTemplate.update(sql, externalId)
     }
+
+    override fun searchProductsByTitle(query: String): List<Product> {
+        val sql = """
+            SELECT id, external_id, title, handle, body_html, vendor, product_type, 
+                   published_at, created_at, updated_at, tags
+            FROM products 
+            WHERE LOWER(title) LIKE ? 
+               OR LOWER(vendor) LIKE ? 
+               OR LOWER(product_type) LIKE ?
+               OR EXISTS (
+                   SELECT 1 FROM unnest(tags) AS tag 
+                   WHERE LOWER(tag) LIKE ?
+               )
+            ORDER BY 
+                CASE 
+                    WHEN LOWER(title) LIKE ? THEN 1
+                    WHEN LOWER(vendor) LIKE ? THEN 2
+                    WHEN LOWER(product_type) LIKE ? THEN 3
+                    ELSE 4
+                END,
+                title ASC
+        """.trimIndent()
+
+        val searchPattern = "%${query.lowercase()}%"
+        val exactTitleMatch = "${query.lowercase()}%"
+        val exactVendorMatch = "${query.lowercase()}%"
+        val exactTypeMatch = "${query.lowercase()}%"
+
+        return jdbcTemplate.query(sql, arrayOf(
+            searchPattern, searchPattern, searchPattern, searchPattern,
+            exactTitleMatch, exactVendorMatch, exactTypeMatch
+        )) { rs, _ ->
+            Product(
+                id = rs.getInt("id"),
+                externalId = rs.getLong("external_id"),
+                title = rs.getString("title"),
+                handle = rs.getString("handle"),
+                bodyHtml = rs.getString("body_html"),
+                vendor = rs.getString("vendor"),
+                productType = rs.getString("product_type"),
+                publishedAt = rs.getTimestamp("published_at"),
+                createdAt = rs.getTimestamp("created_at"),
+                updatedAt = rs.getTimestamp("updated_at"),
+                tags = if (rs.getArray("tags") != null) {
+                    (rs.getArray("tags").array as Array<String>).toList()
+                } else {
+                    emptyList()
+                }
+            )
+        }
+    }
+
+
 }

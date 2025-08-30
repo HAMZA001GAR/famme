@@ -1,6 +1,6 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org"
-      xmlns:htmx="http://www.w3.org/1999/xhtml">
+<html xmlns:th="http://www.thymeleaf.org" xmlns:htmx="http://www.w3.org/1999/xhtml">
+
 <head>
     <title>Products - Famme</title>
     <script src="https://unpkg.com/htmx.org@1.9.2"></script>
@@ -27,7 +27,7 @@
             --wa-color-gray-700: #495057;
             --wa-color-gray-800: #343a40;
             --wa-color-gray-900: #212529;
-            
+
             /* Spacing */
             --wa-spacing-xs: 0.25rem;
             --wa-spacing-sm: 0.5rem;
@@ -35,18 +35,18 @@
             --wa-spacing-lg: 1.5rem;
             --wa-spacing-xl: 3rem;
             --wa-spacing-xxl: 4rem;
-            
+
             /* Border Radius */
             --wa-border-radius-sm: 0.25rem;
             --wa-border-radius: 0.375rem;
             --wa-border-radius-lg: 0.5rem;
             --wa-border-radius-xl: 0.75rem;
-            
+
             /* Shadows */
             --wa-shadow-sm: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
             --wa-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
             --wa-shadow-lg: 0 1rem 3rem rgba(0, 0, 0, 0.175);
-            
+
             /* Typography */
             --wa-font-size-sm: 0.875rem;
             --wa-font-size-base: 1rem;
@@ -54,7 +54,7 @@
             --wa-font-size-xl: 1.25rem;
             --wa-font-size-2xl: 1.5rem;
             --wa-font-size-3xl: 1.875rem;
-            
+
             /* Transitions */
             --wa-transition: all 0.15s ease-in-out;
         }
@@ -260,8 +260,8 @@
             font-size: var(--wa-font-size-base);
         }
 
-        .form-group input, 
-        .form-group textarea, 
+        .form-group input,
+        .form-group textarea,
         .form-group select {
             padding: var(--wa-spacing-md);
             border: 2px solid var(--wa-color-gray-300);
@@ -271,8 +271,8 @@
             background: var(--wa-color-white);
         }
 
-        .form-group input:focus, 
-        .form-group textarea:focus, 
+        .form-group input:focus,
+        .form-group textarea:focus,
         .form-group select:focus {
             outline: none;
             border-color: var(--wa-color-primary);
@@ -459,19 +459,19 @@
             .container {
                 padding: var(--wa-spacing-md);
             }
-            
+
             .form-grid {
                 grid-template-columns: 1fr;
             }
-            
+
             .stats {
                 grid-template-columns: 1fr;
             }
-            
+
             .button-group {
                 flex-direction: column;
             }
-            
+
             .wa-button {
                 width: 100%;
                 justify-content: center;
@@ -499,7 +499,9 @@
         }
 
         @keyframes spin {
-            to { transform: rotate(360deg); }
+            to {
+                transform: rotate(360deg);
+            }
         }
 
         /* Smooth Animations */
@@ -508,8 +510,15 @@
         }
 
         @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
         .slide-in {
@@ -517,294 +526,301 @@
         }
 
         @keyframes slideIn {
-            from { transform: translateX(-20px); opacity: 0; }
-            to { transform: translateX(0); opacity: 1; }
+            from {
+                transform: translateX(-20px);
+                opacity: 0;
+            }
+
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
         }
     </style>
 </head>
+
 <body>
-<div class="container">
-    <!-- Header Section -->
-    <div class="header">
-        <h1>Products Management</h1>
-        <div class="button-group">
-            <button class="wa-button wa-primary"
-                    hx-post="/api/products/sync"
-                    hx-target="#sync-status"
+    <div class="container">
+        <!-- Header Section -->
+        <div class="header">
+            <h1>Products Management</h1>
+            <div class="button-group">
+                <button class="wa-button wa-primary" hx-post="/api/products/sync" hx-target="#sync-status"
                     hx-swap="innerHTML">
-                🔄 Sync Products
-            </button>
-            <button class="wa-button wa-secondary"
-                    hx-get="/products/load"
-                    hx-target="#product-table"
+                    🔄 Sync Products
+                </button>
+                <button class="wa-button wa-secondary" hx-get="/products/load" hx-target="#product-table"
                     hx-swap="innerHTML">
-                📋 Load Products <span id="load-button-badge" style="display: none;"></span>
-            </button>
+                    📋 Load Products <span id="load-button-badge" style="display: none;"></span>
+                </button>
+                <a href="/products/search-page" class="wa-button wa-secondary">
+                    🔍 Search Page
+                </a>
+            </div>
         </div>
-    </div>
 
-    <!-- Sync Status -->
-    <div id="sync-status"></div>
+        <!-- Sync Status -->
+        <div id="sync-status"></div>
 
-    <!-- Statistics Cards -->
-    <div class="stats">
-        <div class="stat-card">
-            <div class="stat-number" id="product-count">-</div>
-            <div class="stat-label">Total Products</div>
-        </div>
-        <div class="stat-card">
-            <div class="stat-number" id="last-sync">-</div>
-            <div class="stat-label">Last Sync</div>
-        </div>
-        <div class="stat-card" id="pending-products-card" style="display: none;">
-            <div class="stat-number" id="pending-count">0</div>
-            <div class="stat-label">Pending Refresh</div>
-        </div>
-    </div>
+        <!-- Search Section -->
+      <!--  <div th:replace="fragments/product-search :: search"></div> -->
 
-    <!-- Products Table -->
-    <div id="product-table" class="product-table-container">
-        <div class="wa-alert wa-info">
-            🚀 Welcome to Products Management! Click "Load Products" to view existing products,
-            or "Sync Products" to fetch the latest data from the external API.
+        <!-- Statistics Cards -->
+        <div class="stats">
+            <div class="stat-card">
+                <div class="stat-number" id="product-count">-</div>
+                <div class="stat-label">Total Products</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="last-sync">-</div>
+                <div class="stat-label">Last Sync</div>
+            </div>
+            <div class="stat-card" id="pending-products-card" style="display: none;">
+                <div class="stat-number" id="pending-count">0</div>
+                <div class="stat-label">Pending Refresh</div>
+            </div>
         </div>
-    </div>
 
-    <!-- Add New Product Form -->
-    <div class="form-section">
-        <h3>Add New Product</h3>
-        <form hx-post="/products/add" 
-              hx-target="#form-status" 
-              hx-swap="innerHTML"
-              hx-on::after-request="if(event.detail.successful) { this.reset(); clearTags(); }">
-            
-            <div id="form-status"></div>
-            
-            <div class="form-grid">
-                <div class="form-group">
-                    <label for="title">Product Title *</label>
-                    <input type="text" id="title" name="title" required 
-                           placeholder="Enter product name">
+        <!-- Products Table -->
+        <div class="product-table-container">
+            <div id="product-table" hx-get="/products/load" hx-trigger="click" hx-swap="innerHTML">
+                <div class="wa-alert wa-info">
+                    🚀 Welcome to Products Management! Click "Load Products" to view existing products,
+                    or "Sync Products" to fetch the latest data from the external API.
                 </div>
-                
-                <div class="form-group">
-                    <label for="vendor">Brand/Vendor</label>
-                    <input type="text" id="vendor" name="vendor" 
-                           placeholder="Enter brand or vendor">
-                </div>
-                
-                <div class="form-group">
-                    <label for="productType">Category</label>
-                    <input type="text" id="productType" name="productType" 
-                           placeholder="e.g., Electronics, Clothing">
-                </div>
-                
-                <div class="form-group">
-                    <label for="handle">URL Handle</label>
-                    <input type="text" id="handle" name="handle" 
-                           placeholder="product-url-friendly-name">
-                </div>
-                
-                <div class="form-group form-full-width">
-                    <label for="bodyHtml">Description</label>
-                    <textarea id="bodyHtml" name="bodyHtml" rows="4" 
-                              placeholder="Describe your product..."></textarea>
-                </div>
-                
-                <div class="form-group form-full-width">
-                    <label for="tags">Tags</label>
-                    <div class="tags-input" id="tags-container">
-                        <input type="text" class="tag-input" id="tag-input" 
-                               placeholder="Type tag and press Enter">
+            </div>
+        </div>
+
+        <!-- Add New Product Form -->
+        <div class="form-section">
+            <h3>Add New Product</h3>
+            <form hx-post="/products/add" hx-target="#form-status" hx-swap="innerHTML"
+                hx-on::after-request="if(event.detail.successful) { this.reset(); clearTags(); }">
+
+                <div id="form-status"></div>
+
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="title">Product Title *</label>
+                        <input type="text" id="title" name="title" required placeholder="Enter product name">
                     </div>
-                    <small style="color: var(--wa-color-gray-600); margin-top: var(--wa-spacing-sm);">
-                        💡 Type a tag and press Enter to add it. Tags help organize and search products.
-                    </small>
-                    <input type="hidden" id="tags-input-hidden" name="tags">
+
+                    <div class="form-group">
+                        <label for="vendor">Brand/Vendor</label>
+                        <input type="text" id="vendor" name="vendor" placeholder="Enter brand or vendor">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="productType">Category</label>
+                        <input type="text" id="productType" name="productType"
+                            placeholder="e.g., Electronics, Clothing">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="handle">URL Handle</label>
+                        <input type="text" id="handle" name="handle" placeholder="product-url-friendly-name">
+                    </div>
+
+                    <div class="form-group form-full-width">
+                        <label for="bodyHtml">Description</label>
+                        <textarea id="bodyHtml" name="bodyHtml" rows="4"
+                            placeholder="Describe your product..."></textarea>
+                    </div>
+
+                    <div class="form-group form-full-width">
+                        <label for="tags">Tags</label>
+                        <div class="tags-input" id="tags-container">
+                            <input type="text" class="tag-input" id="tag-input" placeholder="Type tag and press Enter">
+                        </div>
+                        <small style="color: var(--wa-color-gray-600); margin-top: var(--wa-spacing-sm);">
+                            💡 Type a tag and press Enter to add it. Tags help organize and search products.
+                        </small>
+                        <input type="hidden" id="tags-input-hidden" name="tags">
+                    </div>
                 </div>
-            </div>
-            
-            <div class="form-actions">
-                <button type="submit" class="wa-button wa-primary" onclick="updateTagsInput()">
-                    ➕ Add Product
-                </button>
-                <button type="button" class="wa-button wa-secondary" onclick="clearForm()">
-                    🗑️ Clear Form
-                </button>
-            </div>
-        </form>
+
+                <div class="form-actions">
+                    <button type="submit" class="wa-button wa-primary" onclick="updateTagsInput()">
+                        ➕ Add Product
+                    </button>
+                    <button type="button" class="wa-button wa-secondary" onclick="clearForm()">
+                        🗑️ Clear Form
+                    </button>
+                </div>
+            </form>
+        </div>
+
     </div>
 
-</div>
+    <script>
+        // Tag management
+        let tags = [];
+        let pendingProducts = 0;
+        let isFirstProduct = true;
 
-<script>
-    // Tag management
-    let tags = [];
-    let pendingProducts = 0;
-    let isFirstProduct = true;
-    
-    document.getElementById('tag-input').addEventListener('keydown', function(e) {
-        if (e.key === 'Enter') {
-            e.preventDefault();
-            const tag = this.value.trim();
-            if (tag && !tags.includes(tag)) {
-                tags.push(tag);
-                renderTags();
-                this.value = '';
+        document.getElementById('tag-input').addEventListener('keydown', function (e) {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                const tag = this.value.trim();
+                if (tag && !tags.includes(tag)) {
+                    tags.push(tag);
+                    renderTags();
+                    this.value = '';
+                }
             }
-        }
-    });
-    
-    function renderTags() {
-        const container = document.getElementById('tags-container');
-        const input = document.getElementById('tag-input');
-        
-        container.innerHTML = '';
-        tags.forEach(tag => {
-            const tagElement = document.createElement('span');
-            tagElement.className = 'tag fade-in';
-            tagElement.innerHTML = `
+        });
+
+        function renderTags() {
+            const container = document.getElementById('tags-container');
+            const input = document.getElementById('tag-input');
+
+            container.innerHTML = '';
+            tags.forEach(tag => {
+                const tagElement = document.createElement('span');
+                tagElement.className = 'tag fade-in';
+                tagElement.innerHTML = `
                 ${tag}
                 <span class="tag-remove" onclick="removeTag('${tag}')">&times;</span>
             `;
-            container.appendChild(tagElement);
-        });
-        
-        container.appendChild(input);
-    }
-    
-    function removeTag(tagToRemove) {
-        tags = tags.filter(tag => tag !== tagToRemove);
-        renderTags();
-    }
+                container.appendChild(tagElement);
+            });
 
-    function clearForm() {
-        document.querySelector('form').reset();
-        clearTags();
-        document.getElementById('form-status').innerHTML = '';
-    }
-    
-    function clearTags() {
-        tags = [];
-        document.getElementById('tags-container').innerHTML = '<input type="text" class="tag-input" id="tag-input" placeholder="Type tag and press Enter">';
-        document.getElementById('tags-input-hidden').value = '';
-    }
-    
-    function updateTagsInput() {
-        document.getElementById('tags-input-hidden').value = tags.join(',');
-    }
-    
-    function updatePendingProducts(count) {
-        pendingProducts = count;
-        const card = document.getElementById('pending-products-card');
-        const countElement = document.getElementById('pending-count');
-        const loadButtonBadge = document.getElementById('load-button-badge');
-        
-        if (count > 0) {
-            card.style.display = 'block';
-            countElement.textContent = count;
-            loadButtonBadge.textContent = `(${count})`;
-            loadButtonBadge.style.display = 'inline-block';
-        } else {
-            card.style.display = 'none';
-            loadButtonBadge.textContent = '';
-            loadButtonBadge.style.display = 'none';
+            container.appendChild(input);
         }
-    }
-    
-    // Update product count when table loads
-    document.body.addEventListener('htmx:afterSwap', function(evt) {
-        if (evt.target.id === 'product-table') {
-            const rows = evt.target.querySelectorAll('tbody tr');
-            document.getElementById('product-count').textContent = rows.length;
-            
-            // Update last sync time
-            const now = new Date();
-            document.getElementById('last-sync').textContent = now.toLocaleTimeString();
-            
-            // Reset pending products when table is refreshed
-            updatePendingProducts(0);
-            isFirstProduct = true;
+
+        function removeTag(tagToRemove) {
+            tags = tags.filter(tag => tag !== tagToRemove);
+            renderTags();
         }
-    });
-    
-    // Handle sync button click
-    document.body.addEventListener('htmx:afterRequest', function(evt) {
-        if (evt.detail.xhr.responseURL.includes('/api/products/sync')) {
-            if (evt.detail.successful) {
-                document.getElementById('sync-status').innerHTML = 
-                    '<div class="wa-alert wa-success fade-in">✅ Product sync completed successfully!</div>';
-                
-                // Auto-reload products after sync
-                setTimeout(() => {
-                    htmx.trigger('#product-table', 'click');
-                }, 2000);
+
+        function clearForm() {
+            document.querySelector('form').reset();
+            clearTags();
+            document.getElementById('form-status').innerHTML = '';
+        }
+
+        function clearTags() {
+            tags = [];
+            document.getElementById('tags-container').innerHTML = '<input type="text" class="tag-input" id="tag-input" placeholder="Type tag and press Enter">';
+            document.getElementById('tags-input-hidden').value = '';
+        }
+
+        function updateTagsInput() {
+            document.getElementById('tags-input-hidden').value = tags.join(',');
+        }
+
+        function updatePendingProducts(count) {
+            pendingProducts = count;
+            const card = document.getElementById('pending-products-card');
+            const countElement = document.getElementById('pending-count');
+            const loadButtonBadge = document.getElementById('load-button-badge');
+
+            if (count > 0) {
+                card.style.display = 'block';
+                countElement.textContent = count;
+                loadButtonBadge.textContent = `(${count})`;
+                loadButtonBadge.style.display = 'inline-block';
             } else {
-                document.getElementById('sync-status').innerHTML = 
-                    '<div class="wa-alert wa-error fade-in">❌ Product sync failed. Please try again.</div>';
+                card.style.display = 'none';
+                loadButtonBadge.textContent = '';
+                loadButtonBadge.style.display = 'none';
             }
         }
-        
-        // Handle form submission success
-        if (evt.detail.xhr.responseURL.includes('/products/add') && evt.detail.successful) {
-            // Get the form data
-            const form = document.querySelector('form');
-            const formData = new FormData(form);
-            
-            // Create a new table row for the product
-            const newProductRow = createProductRow({
-                title: formData.get('title'),
-                vendor: formData.get('vendor') || 'N/A',
-                productType: formData.get('productType') || 'N/A',
-                tags: tags.length > 0 ? tags.join(', ') : 'No tags',
-                createdAt: new Date().toISOString().split('T')[0] // Format as YYYY-MM-DD
-            });
-            
-            // Add the new row to the table
-            const tbody = document.querySelector('#product-table tbody');
-            if (tbody) {
-                tbody.appendChild(newProductRow);
-                
-                // Update product count
-                const currentCount = parseInt(document.getElementById('product-count').textContent) || 0;
-                document.getElementById('product-count').textContent = currentCount + 1;
-                
-                // Show success message
-                const statusDiv = document.getElementById('form-status');
-                statusDiv.innerHTML = `
+
+        // Update product count when table loads
+        document.body.addEventListener('htmx:afterSwap', function (evt) {
+            if (evt.target.id === 'product-table') {
+                const rows = evt.target.querySelectorAll('tbody tr');
+                document.getElementById('product-count').textContent = rows.length;
+
+                // Update last sync time
+                const now = new Date();
+                document.getElementById('last-sync').textContent = now.toLocaleTimeString();
+
+                // Reset pending products when table is refreshed
+                updatePendingProducts(0);
+                isFirstProduct = true;
+            }
+        });
+
+        // Handle sync button click
+        document.body.addEventListener('htmx:afterRequest', function (evt) {
+            if (evt.detail.xhr.responseURL.includes('/api/products/sync')) {
+                if (evt.detail.successful) {
+                    document.getElementById('sync-status').innerHTML =
+                        '<div class="wa-alert wa-success fade-in">✅ Product sync completed successfully!</div>';
+
+                    // Auto-reload products after sync
+                    setTimeout(() => {
+                        htmx.trigger('#product-table', 'click');
+                    }, 2000);
+                } else {
+                    document.getElementById('sync-status').innerHTML =
+                        '<div class="wa-alert wa-error fade-in">❌ Product sync failed. Please try again.</div>';
+                }
+            }
+
+            // Handle form submission success
+            if (evt.detail.xhr.responseURL.includes('/products/add') && evt.detail.successful) {
+                // Get the form data
+                const form = document.querySelector('form');
+                const formData = new FormData(form);
+
+                // Create a new table row for the product
+                const newProductRow = createProductRow({
+                    title: formData.get('title'),
+                    vendor: formData.get('vendor') || 'N/A',
+                    productType: formData.get('productType') || 'N/A',
+                    tags: tags.length > 0 ? tags.join(', ') : 'No tags',
+                    createdAt: new Date().toISOString().split('T')[0] // Format as YYYY-MM-DD
+                });
+
+                // Add the new row to the table
+                const tbody = document.querySelector('#product-table tbody');
+                if (tbody) {
+                    tbody.appendChild(newProductRow);
+
+                    // Update product count
+                    const currentCount = parseInt(document.getElementById('product-count').textContent) || 0;
+                    document.getElementById('product-count').textContent = currentCount + 1;
+
+                    // Show success message
+                    const statusDiv = document.getElementById('form-status');
+                    statusDiv.innerHTML = `
                     <div class="success-message fade-in">
                         ✅ Product "${formData.get('title')}" added successfully to the table!
                     </div>
                 `;
-            } else {
-                // If table doesn't exist yet, show message to load products
-                const statusDiv = document.getElementById('form-status');
-                statusDiv.innerHTML = `
+                } else {
+                    // If table doesn't exist yet, show message to load products
+                    const statusDiv = document.getElementById('form-status');
+                    statusDiv.innerHTML = `
                     <div class="success-message fade-in">
                         ✅ Product "${formData.get('title')}" added successfully! 
                         Click "Load Products" to see it in the table.
                     </div>
                 `;
+                }
             }
-        }
-    });
-    
-    function createProductRow(product) {
-        const row = document.createElement('tr');
-        row.className = 'slide-in';
-        row.innerHTML = `
+        });
+
+        function createProductRow(product) {
+            const row = document.createElement('tr');
+            row.className = 'slide-in';
+            row.innerHTML = `
             <td><strong>${product.title}</strong></td>
             <td>${product.vendor}</td>
             <td>${product.productType}</td>
             <td>${product.tags}</td>
             <td>${product.createdAt}</td>
         `;
-        return row;
-    }
-    
-    function refreshProducts() {
-        htmx.trigger('#product-table', 'click');
-    }
-</script>
+            return row;
+        }
+
+        function refreshProducts() {
+            htmx.trigger('#product-table', 'click');
+        }
+    </script>
 </body>
+
 </html>

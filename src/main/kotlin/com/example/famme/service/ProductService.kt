@@ -8,4 +8,5 @@ interface ProductService {
     fun findProductByExternalId(externalId: Long): Product?
     fun deleteProductByExternalId(externalId: Long)
     fun saveProduct(product: Product): Product
+    fun searchProducts(query: String): List<Product>
 }

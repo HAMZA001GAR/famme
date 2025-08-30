@@ -209,4 +209,7 @@ class ProductServiceImpl(
             }
         }
     }
+    override fun searchProducts(query: String): List<Product> {
+        return productRepository.searchProductsByTitle(query)
+    }
 }
