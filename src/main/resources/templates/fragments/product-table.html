@@ -428,7 +428,7 @@
                 <h3>Products</h3>
                 <div class="table-stats">
                     <span class="count" th:text="${#lists.size(products)}">0</span> products found
-                   <!-- <span th:if="${searchQuery != null and searchQuery != ''}" th:text="' for \"' + ${searchQuery} + '
+                    <!-- <span th:if="${searchQuery != null and searchQuery != ''}" th:text="' for \"' + ${searchQuery} + '
                     \"'"></span>
                     -->
                     <span th:if="${searchQuery != null and searchQuery != ''}" th:text="${searchQuery}"></span>
@@ -455,6 +455,7 @@
                         <th>Type</th>
                         <th>Tags</th>
                         <th>Created</th>
+                        <th>Actions</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -481,6 +482,12 @@
                             <div class="product-date" th:if="${product.createdAt != null}"
                                 th:text="${#strings.substring(product.createdAt.toString(), 0, 10)}"></div>
                             <div th:unless="${product.createdAt != null}" class="product-vendor">N/A</div>
+                        </td>
+                        <td>
+                            <a th:href="@{/products/update/{id}(id=${product.externalId})}"
+                                class="wa-button wa-primary wa-sm">
+                                ✏️ Update
+                            </a>
                         </td>
                     </tr>
                 </tbody>

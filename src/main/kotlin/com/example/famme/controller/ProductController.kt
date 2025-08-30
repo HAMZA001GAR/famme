@@ -99,8 +99,9 @@ class ProductWebController(
             // Generate a unique external ID (you might want to use a different strategy)
             val externalId = System.currentTimeMillis()
             
-            // Parse tags from comma-separated string
-            val tagList = tags?.split(",")?.map { it.trim() }?.filter { it.isNotEmpty() } ?: emptyList()
+            // Parse tags from comma-separated string, removing any brackets
+            val cleanTags = tags?.replace("[", "")?.replace("]", "") ?: ""
+            val tagList = cleanTags.split(",").map { it.trim() }.filter { it.isNotEmpty() }
             
             // Create new product
             val newProduct = Product(
@@ -128,6 +129,89 @@ class ProductWebController(
             model.addAttribute("message", "Error adding product: ${e.message}")
             model.addAttribute("messageType", "error")
             "fragments/form-status :: status"
+        }
+    }
+
+    @GetMapping("/update/{externalId}")
+    fun updateProductPage(@PathVariable externalId: Long, model: Model): String {
+        val product = productService.findProductByExternalId(externalId)
+        return if (product != null) {
+            model.addAttribute("product", product)
+            // Format tags as comma-separated string for the form
+            val tagsString = product.tags?.joinToString(", ") ?: ""
+            model.addAttribute("tagsString", tagsString)
+            "product-update"
+        } else {
+            model.addAttribute("error", "Product not found")
+            "redirect:/products"
+        }
+    }
+
+    @PostMapping("/update/{externalId}")
+    fun updateProduct(
+        @PathVariable externalId: Long,
+        @RequestParam title: String,
+        @RequestParam vendor: String?,
+        @RequestParam productType: String?,
+        @RequestParam handle: String?,
+        @RequestParam bodyHtml: String?,
+        @RequestParam tags: String?,
+        model: Model
+    ): String {
+        return try {
+            val existingProduct = productService.findProductByExternalId(externalId)
+            if (existingProduct == null) {
+                model.addAttribute("error", "Product not found")
+                return "redirect:/products"
+            }
+            
+            // Parse tags from comma-separated string, removing any brackets
+            val cleanTags = tags?.replace("[", "")?.replace("]", "") ?: ""
+            val tagList = cleanTags.split(",").map { it.trim() }.filter { it.isNotEmpty() }
+            
+            // Create updated product
+            val updatedProduct = existingProduct.copy(
+                title = title,
+                vendor = vendor,
+                productType = productType,
+                handle = handle,
+                bodyHtml = bodyHtml,
+                tags = tagList
+            )
+            
+            // Update the product
+            val result = productService.updateProduct(externalId, updatedProduct)
+            
+            if (result != null) {
+                // Get the updated product to show in the form
+                val updatedProductForForm = productService.findProductByExternalId(externalId)
+                model.addAttribute("product", updatedProductForForm)
+                // Format tags as comma-separated string for the form
+                val tagsString = updatedProductForForm?.tags?.joinToString(", ") ?: ""
+                model.addAttribute("tagsString", tagsString)
+                model.addAttribute("message", "Product '$title' updated successfully!")
+                model.addAttribute("messageType", "success")
+                return "product-update"
+            } else {
+                model.addAttribute("product", existingProduct)
+                // Format tags as comma-separated string for the form
+                val tagsString = existingProduct.tags?.joinToString(", ") ?: ""
+                model.addAttribute("tagsString", tagsString)
+                model.addAttribute("message", "Failed to update product")
+                model.addAttribute("messageType", "error")
+                return "product-update"
+            }
+            
+        } catch (e: Exception) {
+            // Return error message
+            val existingProduct = productService.findProductByExternalId(externalId)
+            model.addAttribute("product", existingProduct)
+            // Format tags as comma-separated string for the form
+            val tagsString = existingProduct?.tags?.joinToString(", ") ?: ""
+            model.addAttribute("tagsString", tagsString)
+            model.addAttribute("message", "Error updating product: ${e.message}")
+            model.addAttribute("messageType", "error")
+            return "product-update"
         }
     }
 

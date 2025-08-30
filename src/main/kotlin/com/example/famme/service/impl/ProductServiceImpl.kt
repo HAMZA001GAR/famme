@@ -94,6 +94,20 @@ class ProductServiceImpl(
         return productRepository.save(product)
     }
 
+    override fun updateProduct(externalId: Long, updatedProduct: Product): Product? {
+        val existingProduct = productRepository.findByExternalId(externalId)
+        return if (existingProduct != null) {
+            val productToUpdate = updatedProduct.copy(
+                id = existingProduct.id,
+                externalId = externalId,
+                updatedAt = Timestamp.valueOf(LocalDateTime.now())
+            )
+            productRepository.update(productToUpdate)
+        } else {
+            null
+        }
+    }
+
     private fun upsertProduct(productNode: JsonNode) {
         val externalId = productNode["id"].asLong()
         val title = productNode["title"].asText()

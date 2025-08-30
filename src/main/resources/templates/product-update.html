@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <title>Update Product - Famme</title>
+    <script src="https://unpkg.com/htmx.org@1.9.2"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/web-awesome-ui@latest/web-awesome.css">
+    <style>
+        :root {
+            --wa-color-primary: #007bff;
+            --wa-color-secondary: #6c757d;
+            --wa-color-white: #ffffff;
+            --wa-color-gray-100: #f8f9fa;
+            --wa-color-gray-200: #e9ecef;
+            --wa-color-gray-300: #dee2e6;
+            --wa-color-gray-600: #6c757d;
+            --wa-color-gray-800: #343a40;
+            --wa-color-gray-900: #212529;
+            --wa-spacing-md: 1rem;
+            --wa-spacing-lg: 1.5rem;
+            --wa-spacing-xl: 3rem;
+            --wa-border-radius: 0.375rem;
+            --wa-border-radius-lg: 0.5rem;
+            --wa-border-radius-xl: 0.75rem;
+            --wa-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+            --wa-font-size-base: 1rem;
+            --wa-font-size-lg: 1.125rem;
+            --wa-font-size-xl: 1.25rem;
+            --wa-font-size-2xl: 1.5rem;
+            --wa-font-size-3xl: 1.875rem;
+            --wa-transition: all 0.15s ease-in-out;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            line-height: 1.6;
+            color: var(--wa-color-gray-800);
+            background: linear-gradient(135deg, var(--wa-color-gray-100) 0%, var(--wa-color-white) 100%);
+            min-height: 100vh;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: var(--wa-spacing-xl);
+        }
+
+        .header {
+            background: var(--wa-color-white);
+            border-radius: var(--wa-border-radius-xl);
+            padding: var(--wa-spacing-xl);
+            margin-bottom: var(--wa-spacing-xl);
+            box-shadow: var(--wa-shadow);
+            border: 1px solid var(--wa-color-gray-200);
+            text-align: center;
+        }
+
+        .header h1 {
+            margin: 0 0 var(--wa-spacing-md) 0;
+            font-size: var(--wa-font-size-3xl);
+            font-weight: 700;
+            color: var(--wa-color-gray-900);
+        }
+
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: var(--wa-spacing-md);
+            color: var(--wa-color-primary);
+            text-decoration: none;
+            font-weight: 600;
+            margin-bottom: var(--wa-spacing-lg);
+            transition: var(--wa-transition);
+        }
+
+        .form-container {
+            background: var(--wa-color-white);
+            border-radius: var(--wa-border-radius-xl);
+            padding: var(--wa-spacing-xl);
+            box-shadow: var(--wa-shadow);
+            border: 1px solid var(--wa-color-gray-200);
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: var(--wa-spacing-lg);
+        }
+
+        .form-group {
+            margin-bottom: var(--wa-spacing-lg);
+        }
+
+        .form-group.full-width {
+            grid-column: 1 / -1;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: var(--wa-spacing-md);
+            font-weight: 600;
+            color: var(--wa-color-gray-700);
+        }
+
+        .form-group input,
+        .form-group textarea {
+            width: 100%;
+            padding: var(--wa-spacing-md);
+            border: 2px solid var(--wa-color-gray-300);
+            border-radius: var(--wa-border-radius);
+            font-size: var(--wa-font-size-base);
+            transition: var(--wa-transition);
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: var(--wa-color-primary);
+            box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.1);
+        }
+
+        .form-group textarea {
+            min-height: 120px;
+            resize: vertical;
+        }
+
+        .button-group {
+            display: flex;
+            gap: var(--wa-spacing-md);
+            justify-content: flex-end;
+            margin-top: var(--wa-spacing-xl);
+            padding-top: var(--wa-spacing-lg);
+            border-top: 1px solid var(--wa-color-gray-200);
+        }
+
+        .wa-button {
+            padding: var(--wa-spacing-md) var(--wa-spacing-lg);
+            border: none;
+            border-radius: var(--wa-border-radius);
+            font-size: var(--wa-font-size-base);
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--wa-transition);
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: var(--wa-spacing-md);
+        }
+
+        .wa-button.wa-primary {
+            background: var(--wa-color-primary);
+            color: var(--wa-color-white);
+        }
+
+        .wa-button.wa-secondary {
+            background: var(--wa-color-secondary);
+            color: var(--wa-color-white);
+        }
+
+        /* Message Styles */
+        .message-container {
+            padding: var(--wa-spacing-lg);
+            border-radius: var(--wa-border-radius);
+            margin-bottom: var(--wa-spacing-lg);
+            border: 1px solid;
+            animation: slideInDown 0.3s ease-out;
+        }
+
+        .message-container.success {
+            background: #d4edda;
+            border-color: #c3e6cb;
+            color: #155724;
+        }
+
+        .message-container.error {
+            background: #f8d7da;
+            border-color: #f5c6cb;
+            color: #721c24;
+        }
+
+        .message-content {
+            display: flex;
+            align-items: center;
+            gap: var(--wa-spacing-md);
+        }
+
+        .message-icon {
+            font-size: var(--wa-font-size-lg);
+        }
+
+        .message-text {
+            font-weight: 600;
+            font-size: var(--wa-font-size-base);
+        }
+
+        @keyframes slideInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <a href="/products" class="back-link">
+            ← Back to Products
+        </a>
+
+        <div class="header">
+            <h1>✏️ Update Product</h1>
+            <p>Edit product details and save changes</p>
+        </div>
+
+        <div class="form-container">
+            <!-- Success/Error Message Display -->
+            <div th:if="${message}" class="message-container"
+                th:classappend="${messageType == 'success' ? 'success' : 'error'}">
+                <div class="message-content">
+                    <span class="message-icon" th:text="${messageType == 'success' ? '✅' : '❌'}">📝</span>
+                    <span class="message-text" th:text="${message}">Message</span>
+                </div>
+            </div>
+
+            <form th:action="@{/products/update/{id}(id=${product.externalId})}" method="post">
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="title">Product Title *</label>
+                        <input type="text" id="title" name="title" th:value="${product.title}" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="vendor">Vendor</label>
+                        <input type="text" id="vendor" name="vendor" th:value="${product.vendor}">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="productType">Product Type</label>
+                        <input type="text" id="productType" name="productType" th:value="${product.productType}">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="handle">Handle</label>
+                        <input type="text" id="handle" name="handle" th:value="${product.handle}">
+                    </div>
+
+                    <div class="form-group full-width">
+                        <label for="bodyHtml">Description</label>
+                        <textarea id="bodyHtml" name="bodyHtml" th:text="${product.bodyHtml}"></textarea>
+                    </div>
+
+                    <div class="form-group full-width">
+                        <label for="tags">Tags (comma-separated)</label>
+                        <input type="text" id="tags" name="tags" th:value="${tagsString}"
+                            placeholder="e.g., fashion, summer, casual">
+                    </div>
+                </div>
+
+                <div class="button-group">
+                    <a href="/products" class="wa-button wa-secondary">
+                        ❌ Cancel
+                    </a>
+                    <button type="submit" class="wa-button wa-primary">
+                        💾 Update Product
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script th:inline="javascript">
+        // Auto-hide success messages after 5 seconds
+        document.addEventListener('DOMContentLoaded', function () {
+            const successMessages = document.querySelectorAll('.message-container.success');
+            successMessages.forEach(function (message) {
+                setTimeout(function () {
+                    message.style.opacity = '0';
+                    message.style.transform = 'translateY(-20px)';
+                    setTimeout(function () {
+                        message.remove();
+                    }, 300);
+                }, 5000);
+            });
+        });
+    </script>
+</body>
+
+</html>
