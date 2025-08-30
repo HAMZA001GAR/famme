@@ -37,7 +37,7 @@ class ProductServiceImpl(
             val formatter = DateTimeFormatter.ISO_DATE_TIME
             val localDateTime = LocalDateTime.parse(timestampStr, formatter)
             Timestamp.valueOf(localDateTime)
-        } catch (e: DateTimeParseException) {
+        } catch (_: DateTimeParseException) {
             try {
                 // Fallback to the original logic
                 val cleaned = timestampStr.replace("T", " ").substringBefore("+")
@@ -143,8 +143,8 @@ class ProductServiceImpl(
 
             // Upsert related data
             upsertVariants(productNode, product.id!!)
-            upsertImages(productNode, product.id!!)
-            upsertOptions(productNode, product.id!!)
+            upsertImages(productNode, product.id)
+            upsertOptions(productNode, product.id)
 
         } catch (ex: Exception) {
             logger.error("Failed to upsert product $externalId", ex)
