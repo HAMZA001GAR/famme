@@ -15,4 +15,5 @@ interface ProductRepository {
     fun findAll(): List<Product>
     fun deleteByExternalId(externalId: Long)
     fun searchProductsByTitle(query: String): List<Product>
+
 }

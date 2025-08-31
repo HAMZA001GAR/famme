@@ -87,7 +87,12 @@ class ProductServiceImpl(
     }
 
     override fun deleteProductByExternalId(externalId: Long) {
+        val existingProduct = productRepository.findByExternalId(externalId)
+        if (existingProduct == null) {
+            throw IllegalArgumentException("Product with external ID $externalId not found")
+        }
         productRepository.deleteByExternalId(externalId)
+        logger.info("Product '${existingProduct.title}' (ID: $externalId) deleted successfully")
     }
 
     override fun saveProduct(product: Product): Product {

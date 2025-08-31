@@ -34,18 +34,25 @@ class ProductController(
         }
     }
 
-    @DeleteMapping("/{externalId}")
-    @ResponseBody
-    fun deleteProductByExternalId(@PathVariable externalId: Long): ResponseEntity<String> {
-        productService.deleteProductByExternalId(externalId)
-        return ResponseEntity.ok("Product deleted")
-    }
-
     @PostMapping("/sync")
     @ResponseBody
     fun syncProducts(): ResponseEntity<String> {
         productService.syncProductsFromExternalApi()
         return ResponseEntity.ok("Product sync started")
+    }
+
+    @DeleteMapping("/{externalId}")
+    @ResponseBody
+    fun deleteProduct(@PathVariable externalId: Long): ResponseEntity<String> {
+        return try {
+            productService.deleteProductByExternalId(externalId)
+            ResponseEntity.ok("Product deleted successfully")
+        } catch (e: IllegalArgumentException) {
+//            ResponseEntity.notFound().body("Product not found: ${e.message}")
+            ResponseEntity.notFound().build()
+        } catch (e: Exception) {
+            ResponseEntity.internalServerError().body("Error deleting product: ${e.message}")
+        }
     }
 }
 
@@ -213,6 +220,13 @@ class ProductWebController(
             model.addAttribute("messageType", "error")
             return "product-update"
         }
+    }
+
+    @DeleteMapping("delete/{externalId}")
+    @ResponseBody
+    fun deleteProductByExternalId(@PathVariable externalId: Long): ResponseEntity<String> {
+        productService.deleteProductByExternalId(externalId)
+        return ResponseEntity.ok("Product deleted")
     }
 
 }
