@@ -2,6 +2,9 @@ package com.example.famme.controller
 
 import com.example.famme.model.Product
 import com.example.famme.service.ProductService
+import io.swagger.v3.oas.annotations.Operation
+import io.swagger.v3.oas.annotations.responses.ApiResponse
+import io.swagger.v3.oas.annotations.responses.ApiResponses
 import org.springframework.http.ResponseEntity
 import org.springframework.stereotype.Controller
 import org.springframework.ui.Model
@@ -15,7 +18,10 @@ class ProductController(
     private val productService: ProductService
 ) {
 
-    // REST API endpoints
+    @Operation(summary = "Get all products")
+    @ApiResponses(
+        ApiResponse(responseCode = "200", description = "Successfully retrieved products")
+    )
     @GetMapping
     @ResponseBody
     fun getAllProducts(): ResponseEntity<List<Product>> {
@@ -23,6 +29,11 @@ class ProductController(
         return ResponseEntity.ok(products)
     }
 
+    @Operation(summary = "Get a product by externalID")
+    @ApiResponses(
+        ApiResponse(responseCode = "200", description = "Product found"),
+        ApiResponse(responseCode = "400", description = "Product not found")
+    )
     @GetMapping("/{externalId}")
     @ResponseBody
     fun getProductByExternalId(@PathVariable externalId: Long): ResponseEntity<Product> {
@@ -34,6 +45,10 @@ class ProductController(
         }
     }
 
+    @Operation(summary = "Sync products from external API")
+    @ApiResponses(
+        ApiResponse(responseCode = "200", description = "Sync started")
+    )
     @PostMapping("/sync")
     @ResponseBody
     fun syncProducts(): ResponseEntity<String> {
@@ -41,6 +56,11 @@ class ProductController(
         return ResponseEntity.ok("Product sync started")
     }
 
+    @Operation(summary = "Delete product by externalId")
+    @ApiResponses(
+        ApiResponse(responseCode = "200", description = "Product deleted successfully"),
+        ApiResponse(responseCode = "404", description = "Product not found")
+    )
     @DeleteMapping("/{externalId}")
     @ResponseBody
     fun deleteProduct(@PathVariable externalId: Long): ResponseEntity<String> {
@@ -48,7 +68,6 @@ class ProductController(
             productService.deleteProductByExternalId(externalId)
             ResponseEntity.ok("Product deleted successfully")
         } catch (e: IllegalArgumentException) {
-//            ResponseEntity.notFound().body("Product not found: ${e.message}")
             ResponseEntity.notFound().build()
         } catch (e: Exception) {
             ResponseEntity.internalServerError().body("Error deleting product: ${e.message}")
@@ -62,17 +81,20 @@ class ProductWebController(
     private val productService: ProductService
 ) {
 
+    @Operation(summary = "Load Products Page")
     @GetMapping
     fun productsPage(model: Model): String {
         // initially empty, data loaded via HTMX
         return "products"
     }
 
+    @Operation(summary = "Load Search Page")
     @GetMapping("/search-page")
     fun searchPage(model: Model): String {
         return "product-search"
     }
 
+    @Operation(summary = "Load all products (HTMX fragment)")
     @GetMapping("/load")
     fun loadProducts(model: Model): String {
         val products = productService.findAllProducts()
@@ -80,6 +102,7 @@ class ProductWebController(
         return "fragments/product-table :: table"  // returns the table fragment
     }
 
+    @Operation(summary = "Search products")
     @GetMapping("/search")
     fun searchProducts(@RequestParam("query", defaultValue = "") query: String, model: Model): String {
         val products = if (query.isBlank()) {
@@ -92,6 +115,7 @@ class ProductWebController(
         return "fragments/product-table :: table"
     }
 
+    @Operation(summary = "Add new product")
     @PostMapping("/add")
     fun addProduct(
         @RequestParam title: String,
@@ -139,6 +163,7 @@ class ProductWebController(
         }
     }
 
+    @Operation(summary = "Update product")
     @GetMapping("/update/{externalId}")
     fun updateProductPage(@PathVariable externalId: Long, model: Model): String {
         val product = productService.findProductByExternalId(externalId)
@@ -154,6 +179,7 @@ class ProductWebController(
         }
     }
 
+    @Operation(summary = "Update product")
     @PostMapping("/update/{externalId}")
     fun updateProduct(
         @PathVariable externalId: Long,
