@@ -26,7 +26,6 @@ class ProductServiceImpl(
     private val logger = LoggerFactory.getLogger(ProductServiceImpl::class.java)
     @Value("\${famme.api.products-url}")
     private lateinit var productsUrl: String
-    // private val productsUrl = "https://famme.no/products.json"
 
     // Helper function to safely parse timestamps
     private fun parseTimestamp(timestampStr: String?): Timestamp? {

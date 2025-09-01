@@ -146,8 +146,7 @@ class ProductWebController(
                 createdAt = Timestamp.valueOf(LocalDateTime.now()),
                 updatedAt = Timestamp.valueOf(LocalDateTime.now())
             )
-            
-            // Save the product
+
             productService.saveProduct(newProduct)
             
             // Return success message
