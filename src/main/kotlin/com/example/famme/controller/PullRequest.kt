@@ -13,4 +13,9 @@ class PullRequest {
     fun pr() : String {
         return "Pull Request"
     }
+
+    @GetMapping("/newBranch")
+    fun newBranch() : String {
+        return "New Branch"
+    }
 }
