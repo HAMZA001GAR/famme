@@ -23,4 +23,15 @@ class PullRequest {
     fun secondBranch() : String {
         return "Second Branch"
     }
+
+    @GetMapping("/secondBranch")
+    fun thirdBranch() : String {
+        return "Third Branch"
+    }
+
+
+    @GetMapping("/secondBranch")
+    fun mergeBranch() : String {
+        return "merge Branch"
+    }
 }
