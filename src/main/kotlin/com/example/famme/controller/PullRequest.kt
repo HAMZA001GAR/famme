@@ -18,4 +18,9 @@ class PullRequest {
     fun newBranch() : String {
         return "New Branch"
     }
+
+    @GetMapping("/secondBranch")
+    fun secondBranch() : String {
+        return "Second Branch"
+    }
 }
