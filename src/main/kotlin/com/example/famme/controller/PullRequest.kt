@@ -39,4 +39,9 @@ class PullRequest {
     fun rebaseBranch() : String {
         return "Rebase 1 Branch"
     }
+
+    @GetMapping("/secondBranch")
+    fun rebasBranch() : String {
+        return "Rebase 2 Branch"
+    }
 }
