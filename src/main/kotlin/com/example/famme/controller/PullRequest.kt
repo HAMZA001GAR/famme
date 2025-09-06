@@ -49,4 +49,9 @@ class PullRequest {
     fun testBranch() : String {
         return "adding new lignes from github"
     }
+
+    @GetMapping("/testt")
+    fun tesBranch() : String {
+        return "adding new lignes from github 2"
+    }
 }
