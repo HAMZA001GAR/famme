@@ -46,7 +46,7 @@ class PullRequest {
     }
 
     @GetMapping("/test")
-    fun rebasBranch() : String {
+    fun testBranch() : String {
         return "adding new lignes from github"
     }
 }
