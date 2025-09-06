@@ -44,4 +44,9 @@ class PullRequest {
     fun rebasBranch() : String {
         return "Rebase 2 Branch"
     }
+
+    @GetMapping("/test")
+    fun rebasBranch() : String {
+        return "adding new lignes from github"
+    }
 }
